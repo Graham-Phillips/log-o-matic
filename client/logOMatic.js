@@ -31,11 +31,11 @@ export default function logOMatic(obj) {
 					let result = targetValue.apply(this, args);
 					console.log('object: ' + t.constructor.name);
 					console.log('function: ' + propKey);
-					console.log('args: ' + JSON.stringify(args));
-                    console.log('return: ' + JSON.stringify(result));
+					//console.log('args: ' + JSON.stringify(args));
+                   // console.log('return: ' + JSON.stringify(result));
                     logMessage.parentObject = t.constructor.name;
                     logMessage.functionName = propKey;
-                    logMessage.args = JSON.stringify(args);
+                    logMessage.args = JSON.stringify(args); // todo stringify circular error
                     logMessage.returnValue = JSON.stringify(result);
                     writeData(logMessage);
 					return result;

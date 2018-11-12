@@ -10,10 +10,32 @@ const assert = require('assert');
 const router = express.Router();
 
 let mongoDb;
-MongoClient.connect("mongodb://localhost:27017/test", (err, db) => {
-  assert.equal(null, err);
-  mongoDb = db;
-});
+
+
+MongoClient.connect('mongodb://localhost:27017', function (err, client) {
+  if (err) throw err;
+
+  mongoDb = client.db('logomatic');
+
+  // mongoDb.collection('callLogging').find({}, function (findErr, result) {
+  //   if (findErr) console.log("findErr>"+ findErr);
+  //   for(let a in result)
+  //   console.log("result["+a+"] = " + result[ a ]);
+  // });
+
+  var cursor = mongoDb.collection('callLogging').find({});
+  function iterateFunc(doc) {
+    console.log(JSON.stringify(doc, null, 4));
+  }
+  
+  function errorFunc(error) {
+      console.log(error);
+  }
+  
+  cursor.forEach(iterateFunc, errorFunc);
+
+}); 
+
 
 router.post("/add", function(req, res, next) {
   var parentObject = req.body.parentObject;
@@ -37,17 +59,13 @@ router.post("/add", function(req, res, next) {
 });
 
 router.get('/get', (req, res) => {
-  let logs = {};
   mongoDb.collection('callLogging').find({})
-   .each((err, product) => {
-     assert.equal(null, err);
-
-     if (!product) { // no more products
-       res.send({ logs });
-       return;
-     }
-   });
+   .forEach( (doc) => console.log(JSON.stringify(doc, null, 4)),
+    (error) => console.log("E..."+ error)
+   );
+   res.send(doc);
 });
+
 
 
 
